@@ -19,4 +19,9 @@ WHERE email = $1;
 -- name: UpdateUserEmailAndPass :one
 UPDATE users 
 SET email = $1, hashed_password = $2
-RETURNING *; 
+RETURNING *;
+
+-- name: UpgradeUserToRed :exec
+UPDATE users 
+SET is_chirpy_red = true
+WHERE id = $1;
