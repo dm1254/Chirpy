@@ -15,6 +15,7 @@ type ApiConfig struct{
 	db *database.Queries
 	Platform string
 	JWTSecret string
+	PolkaKey string
 }
 
 func (c *ApiConfig) middlewareMetricsInc(next http.Handler) http.Handler{
@@ -41,12 +42,14 @@ func main(){
 	}
 	platform := os.Getenv("PLATFORM")
 	JWTsecret := os.Getenv("JWTSECRET")
+	polka_key := os.Getenv("POLKA_KEY")
 	dbQueries := database.New(dbconn)
 	c := &ApiConfig{
 		fileserverhits: atomic.Int32{},
 		db: dbQueries,
 		Platform: platform,
 		JWTSecret: JWTsecret,
+		PolkaKey: polka_key, 
 	}
 
 	mux := http.NewServeMux()
@@ -69,6 +72,8 @@ func main(){
 	mux.HandleFunc("POST /api/refresh",c.handleRefresh)
 	mux.HandleFunc("POST /api/revoke", c.handleRevoke)
 	mux.HandleFunc("PUT /api/users", c.handlerUpdateUser)
+	mux.HandleFunc("DELETE /api/chirps/{chirpsID}", c.handlerDeletePost)
+	mux.HandleFunc("POST /api/polka/webhooks", c.handlerWebhooks)
 	s := &http.Server{
 		Handler: mux,
 		Addr: ":" + port,
