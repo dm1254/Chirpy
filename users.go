@@ -15,7 +15,6 @@ func (c *ApiConfig) handlerUsers(w http.ResponseWriter, r *http.Request){
 	type requestData struct{
 		Email string `json:"email"`
 		Password string `json:"password"`
-		
 	}
 
 	type responseData struct{
@@ -23,6 +22,7 @@ func (c *ApiConfig) handlerUsers(w http.ResponseWriter, r *http.Request){
 		CreatedAt time.Time `json:"created_at"`
 		UpdatedAt time.Time `json:"updated_at"`
 		Email string `json:"email"`
+		ChirpyRed bool `json:"is_chirpy_red"`
 	}
 
 	decoder := json.NewDecoder(r.Body)
@@ -45,6 +45,7 @@ func (c *ApiConfig) handlerUsers(w http.ResponseWriter, r *http.Request){
 		CreatedAt: usersData.CreatedAt,
 		UpdatedAt: usersData.UpdatedAt,
 		Email: usersData.Email,
+		ChirpyRed: usersData.IsChirpyRed,
 	})
 	
 	
@@ -56,7 +57,11 @@ func(c *ApiConfig) handlerLogin(w http.ResponseWriter, r *http.Request){
 		Password string `json:"password"`
 	}
 	type responseData struct{
-		database.User 
+		ID uuid.UUID`json:"id"`
+		CreatedAt time.Time `json:"created_at"`
+		UpdatedAt time.Time `json:"updated_at"`
+		Email string `json:"email"`
+		ChirpyRed bool `json:"is_chirpy_red"`	
 		Token string `json:"token"`
 		RefreshToken string `json:"refresh_token"`
 	}
@@ -102,12 +107,11 @@ func(c *ApiConfig) handlerLogin(w http.ResponseWriter, r *http.Request){
 		respondWithError(w,http.StatusInternalServerError, "Could not store refresh token", err)	
 	}
 	respondWithJson(w, http.StatusOK, responseData{
-		User: database.User{
 		ID: getUser.ID,
 		CreatedAt: getUser.CreatedAt,
 		UpdatedAt: getUser.UpdatedAt,
 		Email: getUser.Email,
-		},
+		ChirpyRed: getUser.IsChirpyRed,
 		Token: JWTtoken, 
 		RefreshToken: refreshToken,	
 		
@@ -126,6 +130,7 @@ func(c *ApiConfig) handlerUpdateUser(w http.ResponseWriter, r *http.Request){
 		CreatedAt time.Time `json:"created_at"`
 		UpdatedAt time.Time `json:"updated_at"`
 		Email string `json:"email"`
+		ChirpyRed bool `json:"is_chirpy_red"`
 	}
 
 	decoder := json.NewDecoder(r.Body)
@@ -160,6 +165,7 @@ func(c *ApiConfig) handlerUpdateUser(w http.ResponseWriter, r *http.Request){
 		CreatedAt: UpdatedUser.CreatedAt,
 		UpdatedAt: UpdatedUser.UpdatedAt,
 		Email: UpdatedUser.Email,
+		ChirpyRed: UpdatedUser.IsChirpyRed,
 	})
 
 }
